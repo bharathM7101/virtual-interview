@@ -3,245 +3,302 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Virtual Interview — Enhanced Demo UI</title>
+  <title>Virtual Interview — Enhanced UI</title>
+
   <style>
-    :root{
-      --bg:#0f1724;
-      --card:#0b1220;
-      --accent:#6ee7b7;
-      --muted:#94a3b8;
-      --glass:rgba(255,255,255,0.04);
+    :root {
+      --bg: #0c1220;
+      --card: #0f172a;
+      --accent: #34d399;
+      --muted: #9ca3af;
+      --glass: rgba(255,255,255,0.05);
+      --border-glow: 0 0 12px rgba(52,211,153,0.4);
     }
-    body.light{
-      --bg:#f6f8fb;
-      --card:#ffffff;
-      --accent:#2563eb;
-      --muted:#64748b;
-      --glass:rgba(0,0,0,0.05);
-      color:#111827;
+
+    body.light {
+      --bg: #f4f6fb;
+      --card: #ffffff;
+      --accent: #2563eb;
+      --muted: #6b7280;
+      --glass: rgba(0,0,0,0.05);
+      --border-glow: 0 0 12px rgba(37,99,235,0.4);
+      color: #111;
     }
-    *{box-sizing:border-box;}
-    body{
-      margin:0;
-      font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;
-      background:linear-gradient(180deg,var(--bg) 0%, #0b1220 100%);
-      color:#e6eef8;
-      min-height:100vh;
-      transition:background .4s,color .4s;
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, Arial;
+      background: linear-gradient(180deg, var(--bg), #0a0f1a);
+      color: #e5e7eb;
+      transition: 0.35s ease;
+      min-height: 100vh;
     }
-    body.light{background:linear-gradient(180deg,#f3f6fa,#e8ecf5);}
-    .app{max-width:1200px;margin:28px auto;padding:20px;display:grid;grid-template-columns:1fr 380px;gap:20px}
-    .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-    .brand{display:flex;gap:12px;align-items:center}
-    .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#60a5fa);display:flex;align-items:center;justify-content:center;font-weight:700;color:#042028}
-    h1{font-size:18px;margin:0}
-    .sub{color:var(--muted);font-size:13px}
 
-    .card{background:var(--card);border-radius:12px;padding:14px;box-shadow:0 6px 18px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03);transition:background .4s,color .4s;}
-    body.light .card{box-shadow:0 2px 10px rgba(0,0,0,0.1);}
+    /* Animated cards */
+    .card {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,0.07);
+      box-shadow: var(--border-glow);
+      transition: 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 18px rgba(52,211,153,0.5);
+    }
 
-    .stage{display:grid;grid-template-columns:1fr 300px;gap:14px}
-    .video-area{background:var(--card);height:420px;border-radius:10px;display:flex;flex-direction:column;overflow:hidden;transition:background .4s;}
-    .video-top{flex:1;display:flex;gap:12px;padding:12px}
-    .local, .remote{flex:1;border-radius:8px;background:linear-gradient(180deg,#071a2b, #0b1430);display:flex;flex-direction:column;position:relative}
-    body.light .local, body.light .remote{background:#e5e7eb;}
-    .video-placeholder{flex:1;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px}
-    .meta{padding:10px;border-top:1px solid rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:space-between}
+    /* Layout */
+    .app {
+      max-width: 1250px;
+      margin: 32px auto;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 20px;
+    }
 
-    .controls{display:flex;gap:8px;flex-wrap:wrap;}
-    .btn{background:var(--glass);border:1px solid rgba(255,255,255,0.03);padding:8px 12px;border-radius:8px;color:#e6eef8;font-weight:600;cursor:pointer;transition:all .2s;}
-    .btn:hover{background:var(--accent);color:#041226;}
-    body.light .btn{color:#1e293b;border-color:rgba(0,0,0,0.05);}
-    .btn.danger{background:linear-gradient(90deg,#ff7b7b,#ff5252);color:#071017;}
-    .btn.toggle{background:linear-gradient(90deg,#38bdf8,#2563eb);color:#fff;}
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
 
-    .panel{display:flex;flex-direction:column;gap:12px}
-    .panel .section{padding:12px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.015),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.02)}
-    .candidate{display:flex;gap:12px;align-items:center}
-    .avatar{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#60a5fa,#7c3aed);display:flex;align-items:center;justify-content:center;font-weight:700;color:#041226}
-    .candidate-info{flex:1}
-    .meta-line{color:var(--muted);font-size:13px}
+    /* Logo */
+    .logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), #6aa7ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: #041b19;
+      box-shadow: 0 0 14px rgba(52,211,153,0.4);
+    }
 
-    .question{font-size:15px;margin:8px 0}
-    .timer{font-weight:700;color:var(--accent)}
+    /* Buttons */
+    .btn {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: var(--glass);
+      color: inherit;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.25s ease;
+    }
+    .btn:hover {
+      background: var(--accent);
+      color: #041b19;
+      transform: translateY(-2px);
+    }
+    .btn.danger:hover {
+      background: #ef4444;
+      color: white;
+    }
 
-    .chat{height:180px;overflow:auto;padding:8px;display:flex;flex-direction:column;gap:8px}
-    .msg{max-width:85%;padding:8px;border-radius:8px;font-size:13px;position:relative;}
-    .msg.me{align-self:flex-end;background:linear-gradient(90deg,#05273b,#063046);}
-    .msg.them{align-self:flex-start;background:linear-gradient(90deg,#0b1f2b,#071826);}
-    .timestamp{font-size:10px;color:var(--muted);margin-top:2px;text-align:right;}
+    /* Video Area */
+    .video-area {
+      background: var(--card);
+      height: 420px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.4);
+    }
 
-    .textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit}
-    @media (max-width:980px){.app{grid-template-columns:1fr;}.stage{grid-template-columns:1fr}.video-area{height:320px}}
+    .video-top {
+      display: flex;
+      gap: 14px;
+      padding: 12px;
+      height: 78%;
+    }
+
+    .remote, .local {
+      flex: 1;
+      background: rgba(255,255,255,0.03);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .video-placeholder {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 14px;
+      opacity: 0.85;
+    }
+
+    /* Chat improvements */
+    .chat {
+      height: 190px;
+      overflow: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .msg {
+      padding: 10px 12px;
+      border-radius: 10px;
+      max-width: 85%;
+      font-size: 13px;
+      animation: fadeIn 0.25s ease;
+    }
+    .msg.me {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #0f3c4f, #0b2635);
+    }
+    .msg.them {
+      align-self: flex-start;
+      background: linear-gradient(135deg, #1a2433, #0d1522);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Inputs */
+    .textarea, input {
+      background: transparent;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.05);
+      color: inherit;
+      width: 100%;
+    }
+
+    @media (max-width: 950px) {
+      .app { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
+
 <body>
   <div class="app">
+
+    <!-- Main Section -->
     <div>
       <div class="header">
-        <div class="brand">
+        <div style="display:flex;gap:12px;align-items:center">
           <div class="logo">VI</div>
           <div>
-            <h1>Virtual Interview</h1>
-            <div class="sub">Realtime virtual interview — enhanced demo</div>
+            <h2 style="margin:0;font-size:20px">Virtual Interview</h2>
+            <div style="font-size:13px;color:var(--muted)">Enhanced Interactive UI</div>
           </div>
         </div>
-        <div class="controls">
-          <div class="sub">Session ID: <strong>AB12CD</strong></div>
-          <button class="btn toggle" id="themeToggle">🌗 Toggle Theme</button>
-        </div>
+
+        <button class="btn" id="themeToggle">🌗 Toggle Theme</button>
       </div>
 
       <div class="card">
-        <div class="stage">
-          <div>
-            <div class="video-area">
-              <div class="video-top">
-                <div class="remote">
-                  <div class="video-placeholder">Interviewer video (remote)</div>
-                  <div style="position:absolute;left:10px;top:10px;background:rgba(0,0,0,0.4);padding:6px;border-radius:6px;font-size:12px">Interviewer</div>
-                </div>
-                <div class="local">
-                  <div class="video-placeholder">Your camera (local)</div>
-                  <div style="position:absolute;right:10px;bottom:10px;padding:6px;border-radius:6px;font-size:12px;opacity:0.9">Recording • <span style="color:var(--accent)">ON</span></div>
-                </div>
-              </div>
-              <div class="meta">
-                <div>
-                  <strong>Question:</strong>
-                  <div class="question">Explain how you would design a scalable REST API for a social feed.</div>
-                </div>
-                <div style="text-align:right">
-                  <div class="timer" id="timer">10:00</div>
-                  <div class="sub">Time left</div>
-                </div>
-              </div>
+
+        <div class="video-area">
+          <div class="video-top">
+            <div class="remote">
+              <div class="video-placeholder">Interviewer Camera</div>
             </div>
 
-            <div style="display:flex;gap:10px;margin-top:12px">
-              <button class="btn">Raise Hand</button>
-              <button class="btn">Share Screen</button>
-              <button class="btn">Toggle Captions</button>
-              <button class="btn danger">End Interview</button>
+            <div class="local">
+              <div class="video-placeholder">Your Camera</div>
+              <div style="position:absolute;bottom:10px;right:10px;font-size:12px;color:var(--accent)">
+                ● Recording ON
+              </div>
             </div>
           </div>
 
-          <div class="panel">
-            <div class="section candidate">
-              <div class="avatar">BG</div>
-              <div class="candidate-info">
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                  <div>
-                    <div style="font-weight:700">Bharath M. Gowda</div>
-                    <div class="meta-line">Full-stack developer — Bangalore, India</div>
-                  </div>
-                  <div style="text-align:right">
-                    <div style="font-size:12px;color:var(--muted)">Score</div>
-                    <div style="font-weight:700">—</div>
-                  </div>
-                </div>
-              </div>
+          <div style="padding:12px;display:flex;justify-content:space-between">
+            <div>
+              <strong>Question:</strong><br>
+              <span style="color:var(--muted)">Explain a scalable REST API design.</span>
             </div>
-
-            <div class="section">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-                <div style="font-weight:700">Interview Timeline</div>
-                <div class="meta-line">Stage: Technical</div>
-              </div>
-              <div style="display:flex;flex-direction:column;gap:6px">
-                <div class="meta-line">• Intro (2 min)</div>
-                <div class="meta-line">• Technical Q&A (20 min)</div>
-                <div class="meta-line">• System design (15 min)</div>
-              </div>
+            <div style="text-align:right">
+              <div id="timer" style="font-weight:700;color:var(--accent)">10:00</div>
+              <div style="font-size:12px;color:var(--muted)">Remaining</div>
             </div>
-
-            <div class="section" style="display:flex;flex-direction:column">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-                <div style="font-weight:700">Live Chat</div>
-                <div class="meta-line">Messages</div>
-              </div>
-              <div class="chat" id="chat">
-                <div class="msg them">
-                  Hello Bharath — welcome. Can you share your screen when ready?
-                  <div class="timestamp">Interviewer • 10:00</div>
-                </div>
-                <div class="msg me">
-                  Sure — sharing in 3..2..
-                  <div class="timestamp">You • 10:01</div>
-                </div>
-              </div>
-              <div style="display:flex;gap:8px;margin-top:8px">
-                <input id="chatInput" class="textarea" placeholder="Write a message..." />
-                <button class="btn" id="sendBtn">Send</button>
-              </div>
-            </div>
-
           </div>
         </div>
+
+        <div style="display:flex;gap:10px;margin-top:14px">
+          <button class="btn">Raise Hand</button>
+          <button class="btn">Share Screen</button>
+          <button class="btn">Subtitles</button>
+          <button class="btn danger">End</button>
+        </div>
+
       </div>
     </div>
 
+    <!-- Right Panel -->
     <div>
-      <div class="card" style="padding:14px;margin-bottom:12px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-          <div style="font-weight:700">Interviewer Tools</div>
-          <div class="meta-line">Controls</div>
+      <div class="card">
+        <h3 style="margin-top:0">Chat</h3>
+
+        <div class="chat" id="chat">
+          <div class="msg them">
+            Welcome to your interview!
+            <div style="font-size:10px;color:var(--muted);margin-top:3px">10:00 AM</div>
+          </div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <button class="btn">Next Question</button>
-          <button class="btn">Mark Answer</button>
-          <button class="btn">Request Code</button>
-          <button class="btn">Give Feedback</button>
+
+        <div style="display:flex;gap:10px;margin-top:10px">
+          <input id="chatInput" placeholder="Message...">
+          <button class="btn" id="sendBtn">Send</button>
         </div>
       </div>
 
-      <div class="card" style="padding:14px;margin-bottom:12px">
-        <div style="font-weight:700;margin-bottom:8px">Notes</div>
-        <textarea class="textarea" rows="8" placeholder="Write quick notes about the candidate..."></textarea>
+      <div class="card" style="margin-top:15px">
+        <h3 style="margin-top:0">Notes</h3>
+        <textarea rows="7" class="textarea" placeholder="Add interviewer notes here..."></textarea>
       </div>
 
-      <div class="card" style="padding:14px">
-        <div style="font-weight:700;margin-bottom:8px">Settings & Logs</div>
-        <div class="meta-line">• Recording: Enabled</div>
-        <div class="meta-line">• Bandwidth: 2.1 Mbps</div>
-        <div class="meta-line">• Events: Connected • Reconnected 00:02 ago</div>
-      </div>
     </div>
+
   </div>
 
-  <script>
-    // Chat behavior
-    const chat = document.getElementById('chat');
-    const input = document.getElementById('chatInput');
-    const send = document.getElementById('sendBtn');
-    send.addEventListener('click', ()=>{
-      const v = input.value.trim();
-      if(!v) return;
-      const el = document.createElement('div');
-      el.className = 'msg me';
-      const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-      el.innerHTML = `${v}<div class="timestamp">You • ${time}</div>`;
-      chat.appendChild(el);
-      input.value = '';
-      chat.scrollTop = chat.scrollHeight;
-    });
-    input.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') send.click(); });
+<script>
+  // Chat
+  const chat = document.getElementById("chat");
+  const input = document.getElementById("chatInput");
+  document.getElementById("sendBtn").onclick = () => {
+    const v = input.value.trim();
+    if (!v) return;
+    const div = document.createElement("div");
+    div.className = "msg me";
+    div.innerHTML = v;
+    chat.appendChild(div);
+    input.value = "";
+    chat.scrollTop = chat.scrollHeight;
+  };
 
-    // Countdown timer (starts at 10:00)
-    let seconds = 600;
-    const timerEl = document.getElementById('timer');
-    setInterval(()=>{
-      if(seconds>0) seconds--;
-      const m = Math.floor(seconds/60);
-      const s = seconds%60;
-      timerEl.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-    },1000);
+  // Timer
+  let sec = 600;
+  setInterval(() => {
+    if (sec > 0) sec--;
+    const m = String(Math.floor(sec / 60)).padStart(2, "0");
+    const s = String(sec % 60).padStart(2, "0");
+    document.getElementById("timer").textContent = `${m}:${s}`;
+  }, 1000);
 
-    // Theme toggle
-    const themeToggle = document.getElementById('themeToggle');
-    themeToggle.addEventListener('click', ()=>{
-      document.body.classList.toggle('light');
-    });
-  </script>
+  // Theme
+  document.getElementById("themeToggle").onclick = () => {
+    document.body.classList.toggle("light");
+  };
+</script>
 </body>
 </html>
